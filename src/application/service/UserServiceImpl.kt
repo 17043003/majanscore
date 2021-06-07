@@ -10,7 +10,11 @@ class UserServiceImpl(
     private val userRepository: UserRepository
 ): UserService {
     override fun getCurrentUser(id: Int): User {
-        return userRepository.findUser(id) ?: throw IllegalArgumentException("存在しないユーザ ID:$id")
+        return userRepository.findUser(id)
+    }
+
+    override fun getUserByEmail(email: String): User {
+        return userRepository.findUser(email)
     }
 
     override fun registerUser(request: RegisterUserRequest): Int {
