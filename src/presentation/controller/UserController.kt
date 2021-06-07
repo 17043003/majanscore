@@ -4,10 +4,12 @@ import com.msyiszk.domain.service.UserService
 import com.msyiszk.presentation.form.RegisterUserRequest
 import com.msyiszk.presentation.form.UserInfo
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.locations.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import java.util.NoSuchElementException
 
 data class UserRegisterLocation(val name: String, val email: String)
 
@@ -15,9 +17,13 @@ fun Routing.userController(userService: UserService) {
     @Location("/user/{id}")
     data class UserLocation(val id: Int)
     get<UserLocation> { request ->
-        val id = request.id
-        val user = userService.getCurrentUser(id)
-        call.respond(UserInfo(user))
+        try {
+            val user = userService.getCurrentUser(request.id)
+            call.respond(UserInfo(user))
+        }
+        catch(e: NoSuchElementException){
+            call.respond(HttpStatusCode(404, "No user is found"))
+        }
     }
 
     post("/user"){
