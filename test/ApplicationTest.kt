@@ -9,18 +9,12 @@ import io.ktor.locations.*
 import io.ktor.features.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
-<<<<<<< HEAD
-import io.ktor.jackson.*
-import kotlin.test.*
-import io.ktor.server.testing.*
-=======
 import com.msyiszk.domain.service.UserService
 import io.ktor.jackson.*
 import kotlin.test.*
 import io.ktor.server.testing.*
 import org.koin.java.KoinJavaComponent.inject
 import org.koin.ktor.ext.inject
->>>>>>> features/add_test_config
 
 class ApplicationTest {
     @Test
@@ -32,8 +26,6 @@ class ApplicationTest {
             }
         }
     }
-<<<<<<< HEAD
-=======
 
     @Test
     fun testUser(){
@@ -63,5 +55,4 @@ class ApplicationTest {
             }
         }
     }
->>>>>>> features/add_test_config
 }
