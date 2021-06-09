@@ -47,6 +47,11 @@ class ApplicationTest {
                 setBody("""{"name":"test", "email":"test@example.com"}""")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals("""
+                    |{
+                    |  "status" : "OK",
+                    |  "id" : 1
+                    |}""".trimMargin(), response.content)
             }
         }
     }
