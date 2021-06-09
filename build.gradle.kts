@@ -40,6 +40,11 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("io.ktor:ktor-client-mock:$ktor_version")
+    testImplementation("io.ktor:ktor-client-mock-jvm:$ktor_version")
+//    testImplementation("io.ktor:ktor-client-mock-js:$ktor_version")
+//    testImplementation("io.ktor:ktor-client-mock-native:$ktor_version")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")

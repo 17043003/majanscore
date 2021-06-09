@@ -10,6 +10,7 @@ import io.ktor.features.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
 import com.msyiszk.domain.service.UserService
+import com.msyiszk.domain.service.testModule
 import com.msyiszk.domain.service.userModule
 import com.msyiszk.presentation.controller.userController
 import com.msyiszk.presentation.form.RegisterUserRequest
@@ -53,7 +54,12 @@ fun Application.module(testing: Boolean = false) {
 
     install(Koin) {
         SLF4JLogger()
-        modules(userModule)
+        if(!testing) {
+            modules(userModule)
+        }
+        else{
+            modules(testModule)
+        }
     }
     val userService: UserService by inject()
 
