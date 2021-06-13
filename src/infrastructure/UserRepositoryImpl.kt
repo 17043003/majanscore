@@ -7,21 +7,23 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepositoryImpl: UserRepository {
-    override fun register(name: String, email: String): Int {
+    override fun register(user: RegisterUserRequest): Int {
         DataBaseUtil.connectDatabase()
 
         return transaction {
             addLogger(StdOutSqlLogger)
 
             // return user id when user is already registered
-            val userRow = UserTable.select{ UserTable.email like email }.singleOrNull()
+            val userRow = UserTable.select{ UserTable.email like user.email }.singleOrNull()
             if(userRow != null){
                 return@transaction userRow[UserTable.id]
             }
+            user.password
 
             UserTable.insert {
-                it[this.name] = name
-                it[this.email] = email
+                it[this.name] = user.name
+                it[this.email] = user.email
+                it[this.password] = user.password
             } get UserTable.id
         }
     }
@@ -31,7 +33,7 @@ class UserRepositoryImpl: UserRepository {
 
         return transaction {
             val userRow = UserTable.select { UserTable.id eq id }.single()
-            User(userRow[UserTable.id], userRow[UserTable.name], userRow[UserTable.email])
+            User(userRow[UserTable.id], userRow[UserTable.name], userRow[UserTable.email], userRow[UserTable.password])
         }
     }
 
@@ -40,14 +42,7 @@ class UserRepositoryImpl: UserRepository {
 
         return transaction {
             val userRow = UserTable.select{ UserTable.email eq email }.single()
-            User(userRow[UserTable.id], userRow[UserTable.name], userRow[UserTable.email])
+            User(userRow[UserTable.id], userRow[UserTable.name], userRow[UserTable.email], userRow[UserTable.password])
         }
-    }
-
-    object UserTable: Table("user"){
-        val id = integer("id").autoIncrement()
-        val name = varchar("name", 32)
-        val email = varchar("email", 128).uniqueIndex()
-        override val primaryKey = PrimaryKey(id)
     }
 }
