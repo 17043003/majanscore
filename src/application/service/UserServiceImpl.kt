@@ -18,7 +18,7 @@ class UserServiceImpl(
     }
 
     override fun registerUser(request: RegisterUserRequest): Int {
-        return userRepository.register(request.name, request.email)
+        return userRepository.register(request)
     }
 }
 
@@ -26,11 +26,11 @@ class UserServiceImplTest(
     private val userRepository: UserRepository
 ): UserService {
     override fun getCurrentUser(id: Int): User {
-        return User(1, "test", "test@example.com")
+        return User(1, "test", "test@example.com", "password")
     }
 
     override fun getUserByEmail(email: String): User {
-        return User(1, "test", "test@example.com")
+        return User(1, "test", "test@example.com", "password")
     }
 
     override fun registerUser(request: RegisterUserRequest): Int {
