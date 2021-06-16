@@ -1,5 +1,6 @@
 package com.msyiszk.infrastructure
 
+import com.msyiszk.domain.model.User
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
 
@@ -19,5 +20,13 @@ object UserTable: Table("user"){
     val name = varchar("name", 32)
     val email = varchar("email", 128).uniqueIndex()
     val password = varchar("password", 128)
+    override val primaryKey = PrimaryKey(id)
+}
+
+object QuizTable: Table("quiz"){
+    val id = integer("id").autoIncrement()
+    val user_id = (integer("user_id") references UserTable.id)
+    val title = varchar("title", 128)
+    val content = varchar("content", 128)
     override val primaryKey = PrimaryKey(id)
 }

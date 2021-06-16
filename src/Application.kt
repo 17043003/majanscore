@@ -12,11 +12,13 @@ import io.ktor.locations.*
 import io.ktor.features.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
+import com.msyiszk.domain.service.QuizService
 import io.ktor.jackson.*
 import com.msyiszk.domain.service.UserService
 import com.msyiszk.domain.service.testModule
 import com.msyiszk.domain.service.userModule
 import com.msyiszk.infrastructure.DataBaseUtil
+import com.msyiszk.presentation.controller.quizController
 import com.msyiszk.presentation.controller.userController
 import io.ktor.auth.jwt.*
 import io.ktor.request.*
@@ -80,6 +82,7 @@ fun Application.module(testing: Boolean = false) {
         }
     }
     val userService: UserService by inject()
+    val quizService: QuizService by inject()
 
     routing {
         post("/auth"){
@@ -105,6 +108,7 @@ fun Application.module(testing: Boolean = false) {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
         userController(userService)
+        quizController(quizService)
     }
 }
 
