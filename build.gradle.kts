@@ -8,19 +8,21 @@ val logback_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.5.10"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 group = "com.msyiszk"
 version = "0.0.1"
 
 application {
-    mainClassName = "io.ktor.server.netty.EngineMain"
+    mainClassName = "com.msyiszk.ApplicationKt"
 }
 
 repositories {
     mavenLocal()
     jcenter()
     maven { url = uri("https://kotlin.bintray.com/ktor") }
+    maven { url = uri("https://plugins.gradle.org/m2/") }
 }
 
 dependencies {
@@ -47,6 +49,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktor_version")
+
+    implementation("com.github.jengelman.gradle.plugins:shadow:2.0.1")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")
