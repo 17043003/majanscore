@@ -1,6 +1,7 @@
 package com.msyiszk.infrastructure
 
 import com.msyiszk.domain.repository.QuizRepository
+import com.msyiszk.infrastructure.DataBaseUtil
 import com.msyiszk.presentation.form.RegisterQuizRequest
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -12,6 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class QuizRepositoryImpl: QuizRepository {
     override fun registerQuiz(quiz: RegisterQuizRequest): Int {
         DataBaseUtil.connectDatabase()
+
 
         return transaction {
             addLogger(StdOutSqlLogger)

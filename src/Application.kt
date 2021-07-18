@@ -18,10 +18,15 @@ import com.msyiszk.domain.service.UserService
 import com.msyiszk.domain.service.testModule
 import com.msyiszk.domain.service.userModule
 import com.msyiszk.infrastructure.DataBaseUtil
+import com.msyiszk.infrastructure.UserTable
 import com.msyiszk.presentation.controller.quizController
 import com.msyiszk.presentation.controller.userController
 import io.ktor.auth.jwt.*
 import io.ktor.request.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
@@ -83,6 +88,21 @@ fun Application.module(testing: Boolean = false) {
     }
     val userService: UserService by inject()
     val quizService: QuizService by inject()
+
+    DataBaseUtil.initDatabase(
+        url = environment.config.property("ktor.database.url").getString() + environment.config.property("ktor.database.name").getString(),
+        driver = environment.config.property("ktor.database.driver").getString(),
+        user = environment.config.property("ktor.database.user").getString(),
+        password = environment.config.property("ktor.database.password").getString()
+    )
+
+    val test: Boolean = environment.config.property("ktor.test").getString().equals("true", false)
+    if(test){
+        DataBaseUtil.connectDatabase()
+        transaction {
+            SchemaUtils.create (UserTable)
+        }
+    }
 
     routing {
         post("/auth"){

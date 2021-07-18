@@ -1,5 +1,7 @@
 package com.msyiszk
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
@@ -10,16 +12,27 @@ import io.ktor.features.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
 import com.msyiszk.domain.service.UserService
+import com.typesafe.config.ConfigFactory
+import io.ktor.config.*
 import io.ktor.jackson.*
 import kotlin.test.*
 import io.ktor.server.testing.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.java.KoinJavaComponent.inject
 import org.koin.ktor.ext.inject
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.*
+
+private val testConfig = createTestEnvironment{
+    config = HoconApplicationConfig(ConfigFactory.load("test.conf"))
+}
 
 class ApplicationTest {
     @Test
     fun testRoot() {
-        withTestApplication({ module(testing = true) }) {
+//        withTestApplication({ module(testing = true) }) {
+        withApplication(testConfig) {
             handleRequest(HttpMethod.Get, "/").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals("HELLO WORLD!", response.content)

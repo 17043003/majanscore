@@ -2,6 +2,7 @@ package com.msyiszk.infrastructure
 
 import com.msyiszk.domain.model.User
 import com.msyiszk.domain.repository.UserRepository
+import com.msyiszk.infrastructure.DataBaseUtil
 import com.msyiszk.presentation.form.RegisterUserRequest
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
