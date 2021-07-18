@@ -41,9 +41,43 @@ class ApplicationTest {
     }
 
     @Test
-    fun testUser(){
-        withTestApplication({ module(testing = true) }) {
+    fun testRegisterUser() {
+        withApplication(testConfig) {
+            handleRequest(HttpMethod.Post, "/user") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody("""{"name":"test", "email":"test@example.com", "password":"password"}""")
+            }.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(
+                    """
+                    |{
+                    |  "status" : "OK",
+                    |  "id" : 1
+                    |}""".trimMargin(), response.content
+                )
+            }
+        }
+    }
+
+    @Test
+    fun testGetUser(){
+        withApplication(testConfig) {
             handleRequest(HttpMethod.Get, "/user/1"){
+                val jwt = transaction {
+                    val jwtIssuer = environment.config.property("jwt.domain").getString()
+                    val jwtAudience = environment.config.property("jwt.audience").getString()
+                    val jwtRealm = environment.config.property("jwt.realm").getString()
+                    val algorithm = Algorithm.HMAC256("secret")
+
+                    JWT.create()
+                        .withAudience(jwtAudience)
+                        .withExpiresAt(Date.from(LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC))) // 1日間
+                        .withClaim(1.toString(), id)
+                        .withIssuer(jwtIssuer)
+                        .sign(algorithm)
+                }
+                addHeader("Authorization", "bearer $jwt")
+                addHeader("Content-Type", "application/json")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals("""
@@ -51,19 +85,6 @@ class ApplicationTest {
                     |  "id" : 1,
                     |  "name" : "test",
                     |  "email" : "test@example.com"
-                    |}""".trimMargin(), response.content)
-            }
-        }
-        withTestApplication({ module(testing = true) }) {
-            handleRequest(HttpMethod.Post, "/user"){
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody("""{"name":"test", "email":"test@example.com"}""")
-            }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("""
-                    |{
-                    |  "status" : "OK",
-                    |  "id" : 1
                     |}""".trimMargin(), response.content)
             }
         }

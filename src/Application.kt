@@ -52,18 +52,23 @@ fun Application.module(testing: Boolean = false) {
         header("MyCustomHeader")
         allowCredentials = true
         anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+        host("192.168.11.9:3000", schemes = listOf("http", "https"))
+        allowNonSimpleContentTypes = true
     }
 
-    val jwtIssuer = environment.config.property("ktor.jwt.domain").getString()
-    val jwtAudience = environment.config.property("ktor.jwt.audience").getString()
-    val jwtRealm = environment.config.property("ktor.jwt.realm").getString()
+    val jwtIssuer = environment.config.property("jwt.domain").getString()
+    val jwtAudience = environment.config.property("jwt.audience").getString()
+    val jwtRealm = environment.config.property("jwt.realm").getString()
 
     install(Authentication) {
         jwt{
             realm = jwtRealm
             verifier(makeJwtVerifier(jwtIssuer, jwtAudience))
-            validate { jwtCredential ->
-                if(jwtCredential.payload.audience.contains(jwtAudience)) JWTPrincipal(jwtCredential.payload) else null
+            validate {
+                it.payload.getClaim("user_id").let { claim ->
+                    if(!claim.isNull) AuthUser(claim.asInt())
+                    else null
+                }
             }
         }
     }
@@ -110,6 +115,7 @@ fun Application.module(testing: Boolean = false) {
             call.receive<UserAuthRequest>().let {
                 call.respond(mapOf("jwt" to transaction {
                     val user = userService.getUserByEmail(it.email)
+                    val userId = user.id
 
                     if(it.password != user.password){
                             return@transaction ""
@@ -117,7 +123,7 @@ fun Application.module(testing: Boolean = false) {
                     JWT.create()
                         .withAudience(jwtAudience)
                         .withExpiresAt(Date.from(LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC))) // 1日間
-                        .withClaim(user.id.toString(), id)
+                        .withClaim("user_id", userId)
                         .withIssuer(jwtIssuer)
                         .sign(algorithm)
                 }))
@@ -135,3 +141,4 @@ fun Application.module(testing: Boolean = false) {
 private val algorithm = Algorithm.HMAC256("secret")
 private fun makeJwtVerifier(issuer: String, audience: String): JWTVerifier = JWT.require(algorithm).withAudience(audience).withIssuer(issuer).build()
 data class UserAuthRequest(val email: String, val password: String)
+data class AuthUser(val id: Int): Principal
