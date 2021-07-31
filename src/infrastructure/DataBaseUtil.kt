@@ -49,5 +49,13 @@ object QuizTable: Table("quiz"){
     val user_id = (integer("user_id") references UserTable.id)
     val title = varchar("title", 128)
     val content = varchar("content", 128)
+    val drawn = varchar("drawn", 32)
+    val round = integer("round")
+    val wind = integer("wind")
+    val around = integer("around")
+    val dora = varchar("dora", 32)
+    val point = integer("point")
+    val answer = varchar("answer", 32)
+    val description = varchar("description", 256)
     override val primaryKey = PrimaryKey(id)
 }
