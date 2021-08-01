@@ -8,6 +8,7 @@ import com.msyiszk.presentation.form.RegisterQuizRequest
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.lang.IllegalArgumentException
 
 class QuizRepositoryImpl: QuizRepository {
     override fun getAllQuiz(): List<Quiz> {
@@ -52,6 +53,33 @@ class QuizRepositoryImpl: QuizRepository {
                 it[this.answer] = quiz.answer
                 it[this.description] = quiz.description
             } get QuizTable.id
+        }
+    }
+
+    override fun getDetailQuiz(id: Int): Quiz {
+        DataBaseUtil.connectDatabase()
+
+        return transaction {
+            addLogger(StdOutSqlLogger)
+
+            val quizInfo = (QuizTable innerJoin UserTable).select{ QuizTable.id eq id }.singleOrNull()
+                ?: throw IllegalArgumentException()
+            quizInfo.let {
+                Quiz(
+                    it[QuizTable.id],
+                    it[QuizTable.title],
+                    it[QuizTable.content],
+                    it[UserTable.name],
+                    it[QuizTable.drawn],
+                    it[QuizTable.round],
+                    it[QuizTable.wind],
+                    it[QuizTable.around],
+                    it[QuizTable.dora],
+                    it[QuizTable.point],
+                    it[QuizTable.answer],
+                    it[QuizTable.description]
+                )
+            }
         }
     }
 }

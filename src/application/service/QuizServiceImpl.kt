@@ -14,4 +14,8 @@ class QuizServiceImpl(
     override fun registerQuiz(request: RegisterQuizRequest): Int {
         return quizRepository.registerQuiz(request)
     }
+
+    override fun getDetailQuiz(id: Int): Quiz {
+        return quizRepository.getDetailQuiz(id)
+    }
 }

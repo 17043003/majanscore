@@ -7,4 +7,5 @@ import com.msyiszk.presentation.form.RegisterQuizRequest
 interface QuizRepository {
     fun getAllQuiz(): List<Quiz>
     fun registerQuiz(quiz: RegisterQuizRequest): Int
+    fun getDetailQuiz(id: Int): Quiz
 }

@@ -34,6 +34,7 @@ dependencies {
     implementation("io.ktor:ktor-auth:$ktor_version")
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-jackson:$ktor_version")
+    implementation("io.ktor:ktor-locations:$ktor_version")
 
     val exposedVersion: String by project
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
