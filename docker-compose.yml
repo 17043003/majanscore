@@ -1,0 +1,25 @@
+version: "3"
+services:
+  db:
+    image: mysql:8.0.23
+    ports:
+      - "3306:3306"
+    container_name: mysql_majan
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_DATABASE=majanscore
+      - MYSQL_USER=majanscore
+      - MYSQL_PASSWORD=majanscore
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/sql:/docker-entrypoint-initdb.d
+
+  ktor:
+    build: .
+    container_name: majan_score
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
